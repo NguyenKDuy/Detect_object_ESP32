@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>YOLOv8 Live Detection</title>
+    <style>
+        body {
+            text-align: center;
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        img {
+            border: 3px solid #444;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 YOLOv8 Live Object Detection</h1>
+    <img src="{{ url_for('video_feed') }}" width="720">
+    <p>Nhấn <b>Ctrl+C</b> để dừng server.</p>
+</body>
+</html>
