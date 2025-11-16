@@ -4,6 +4,7 @@ Tài liệu này hướng dẫn cách thiết lập **ESP32-CAM**, cài đặt m
 
 ---
 # Cấu trúc dự án
+```
 .
 ├── .vscode/
 │   └── ... (các cấu hình cho VS Code – launch.json, settings.json)
@@ -29,7 +30,7 @@ Tài liệu này hướng dẫn cách thiết lập **ESP32-CAM**, cài đặt m
 ├── requirements.txt      # Danh sách Python packages (pip)
 │
 └── yolov8n.pt            # Pretrained YOLOv8 model (COCO 80 classes)
-
+```
 ---
 
 ## I. 📷 Chạy ESP32-CAM Camera Server
