@@ -1,32 +1,41 @@
 from flask import Flask, render_template, Response
 from ultralytics import YOLO
 import cv2
+import numpy as np
+import requests
 
 app = Flask(__name__)
 
 # Load YOLO model
 model = YOLO("yolov8n.pt")
+url = "http://192.168.1.9/cam-hi.jpg"
 
-# Khởi tạo webcam
-cap = cv2.VideoCapture(0)
-# replace with cv2.VideoCapture('http://<ip_cam>/cam-hi.jpg')
 def gen_frames():
     while True:
-        success, frame = cap.read()
-        if not success:
-            break
+        try:
+            # Tải ảnh từ URL mỗi vòng → luôn mới
+            img_bytes = requests.get(url, timeout=1).content
 
-        # Nhận diện vật thể
-        results = model(frame)
-        annotated_frame = results[0].plot()
+            # Chuyển bytes thành ảnh OpenCV
+            img_array = np.frombuffer(img_bytes, np.uint8)
+            frame = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
 
-        # Mã hóa khung hình sang JPEG để gửi qua HTTP stream
-        ret, buffer = cv2.imencode('.jpg', annotated_frame)
-        frame = buffer.tobytes()
+            if frame is None:
+                continue
 
-        # Trả về chuỗi byte cho trình duyệt (MJPEG)
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            # YOLO detect
+            results = model(frame)
+            annotated_frame = results[0].plot()
+
+            # Encode JPEG
+            ret, buffer = cv2.imencode('.jpg', annotated_frame)
+            frame = buffer.tobytes()
+
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        except Exception as e:
+            print("❌ Error:", e)
+            continue
 
 @app.route('/')
 def index():

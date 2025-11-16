@@ -1,0 +1,49 @@
+# Hệ thống ESP32-CAM + YOLO Detection + Flask Web
+
+Tài liệu này hướng dẫn cách chạy ESP32-CAM, cài môi trường YOLO, và chạy server Flask để hiển thị kết quả nhận diện trực tiếp từ camera.
+
+---
+
+## I. Chạy ESP32-CAM Camera Server
+
+### 1. Nạp chương trình cho ESP32-CAM
+- Mở **Arduino IDE**. Mở file ESP32_server/ESP32_server.ino
+- Vào **Sketch → Include Library → Add .ZIP Library…**
+  → Chọn file **esp32cam-main.zip**.
+- Mở file chương trình:
+
+### 2. Cấu hình board trong Arduino IDE
+- Vào **Tools → Board
+→ Chọn **ESP32 Wrover Module**.
+- Nhấn **Upload** để nạp code vào ESP32-CAM.
+
+### 3. Lấy địa chỉ IP camera
+- Mở **Serial Monitor** (baud **115200**).
+- Khi kết nối WiFi thành công, ESP32-CAM sẽ in ra địa chỉ IP:
+- Ví dụ: http://192.168.1.9/cam-hi.jpg
+
+
+---
+
+## II. Cài môi trường YOLO trên Python
+
+### 1. Tạo môi trường Python bằng Conda
+
+#### **Cách 1: Từ file environment.yml (khuyến khích)**
+```sh
+conda env create -f environment.yml
+conda activate yolovenv
+```
+#### **Cách 2: Từ file requirements.txt **
+```
+conda create -n yolovenv python==3.9
+conda activate yolovenv
+python -m pip install -r requirements.txt
+```
+### 2. Cập nhật lại đường dẫn url trong main.py
+- url = "http://<your ip>/cam-hi.jpg"
+- Và sau đó trong terminal chạy python `main.py`
+
+### 3. Mở đường dẫn và xem http://localhost:5000
+
+
