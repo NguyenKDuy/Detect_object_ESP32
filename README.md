@@ -3,6 +3,34 @@
 Tài liệu này hướng dẫn cách thiết lập **ESP32-CAM**, cài đặt môi trường **YOLO** trên Python, và chạy server **Flask** để hiển thị kết quả nhận diện đối tượng trực tiếp từ camera.
 
 ---
+# Cấu trúc dự án
+.
+├── .vscode/
+│   └── ... (các cấu hình cho VS Code – launch.json, settings.json)
+│
+├── ESP32_server/
+│   ├── ESP32_server.ino
+│   └── ... (mã nguồn chạy trên Arduino, tạo WebServer xuất ảnh JPG)
+│
+├── templates/
+│   └── index.html        # Template HTML cho Flask hiển thị video MJPEG stream
+│
+├── README.md             # Hướng dẫn sử dụng (file Markdown)
+│
+├── default_labels_detection.note
+│                         # Ghi chú về các nhãn YOLO COCO 80 classes mặc định, xem cho biết
+│
+├── environment.yml       # File cấu hình Conda cho môi trường YOLO + Flask bằng conda
+│
+├── esp32cam-main.zip     # Thư viện ESP32-CAM cần thêm vào thêm vào Arduino IDE
+│
+├── main.py               # Code Flask + YOLO detect từ ESP32-CAM
+│
+├── requirements.txt      # Danh sách Python packages (pip)
+│
+└── yolov8n.pt            # Pretrained YOLOv8 model (COCO 80 classes)
+
+---
 
 ## I. 📷 Chạy ESP32-CAM Camera Server
 
