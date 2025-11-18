@@ -19,7 +19,13 @@
 </head>
 <body>
     <h1>🚀 YOLOv8 Live Object Detection</h1>
-    <img src="{{ url_for('video_feed') }}" width="720">
+
+    <!-- Hiển thị link đầy đủ -->
+    <p>📷 Video Feed URL: <b>{{ video_url }}</b></p>
+
+    <!-- IMG dùng trực tiếp link -->
+    <img src="{{ video_url }}" width="720">
+
     <p>Nhấn <b>Ctrl+C</b> để dừng server.</p>
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, url_for
 from ultralytics import YOLO
 import cv2
 import numpy as np
@@ -6,17 +6,21 @@ import requests
 
 app = Flask(__name__)
 
-# Load YOLO model
+# YOLO model
 model = YOLO("yolov8n.pt")
-url = "http://192.168.1.9/cam-hi.jpg"
+
+# Ảnh snapshot từ ESP32-CAM
+url = "http://10.158.229.118/cam-hi.jpg"
+
 
 def gen_frames():
     while True:
         try:
-            # Tải ảnh từ URL mỗi vòng → luôn mới
-            img_bytes = requests.get(url, timeout=1).content
+            # load ảnh từ URL
+            response = requests.get(url, timeout=1)
+            img_bytes = response.content
 
-            # Chuyển bytes thành ảnh OpenCV
+            # decode sang ảnh opencv
             img_array = np.frombuffer(img_bytes, np.uint8)
             frame = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
 
@@ -25,26 +29,33 @@ def gen_frames():
 
             # YOLO detect
             results = model(frame)
-            annotated_frame = results[0].plot()
+            annotated = results[0].plot()
 
-            # Encode JPEG
-            ret, buffer = cv2.imencode('.jpg', annotated_frame)
+            # encode lại JPG để stream
+            ret, buffer = cv2.imencode('.jpg', annotated)
             frame = buffer.tobytes()
 
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            yield (
+                b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n'
+            )
+
         except Exception as e:
             print("❌ Error:", e)
             continue
 
-@app.route('/')
-def index():
-    return render_template('index.html')
 
-@app.route('/video_feed')
+@app.route("/")
+def index():
+    video_url = url_for('video_feed', _external=True)
+    return render_template("index.html", video_url=video_url)
+
+
+@app.route("/video_feed")
 def video_feed():
     return Response(gen_frames(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+                    mimetype="multipart/x-mixed-replace; boundary=frame")
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=False)
